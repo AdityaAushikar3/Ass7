@@ -7,6 +7,7 @@ function ExpenseForm({ onAddExpense }) {
     category: 'Food & Dining',
     date: new Date().toISOString().split('T')[0]
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,7 +17,7 @@ function ExpenseForm({ onAddExpense }) {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.title.trim()) {
@@ -29,21 +30,26 @@ function ExpenseForm({ onAddExpense }) {
       return;
     }
 
-    onAddExpense({
-      id: Date.now(),
-      title: formData.title.trim(),
-      amount: parseFloat(formData.amount),
-      category: formData.category,
-      date: formData.date
-    });
+    try {
+      setIsSubmitting(true);
+      await onAddExpense({
+        title: formData.title.trim(),
+        amount: parseFloat(formData.amount),
+        category: formData.category,
+        date: formData.date
+      });
 
-    // Reset title and amount, keep category and today's date
-    setFormData((prev) => ({
-      ...prev,
-      title: '',
-      amount: ''
-    }));
+      // Reset title and amount, keep category and today's date
+      setFormData((prev) => ({
+        ...prev,
+        title: '',
+        amount: ''
+      }));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
 
   return (
     <div className="card form-card">
@@ -108,8 +114,8 @@ function ExpenseForm({ onAddExpense }) {
           />
         </div>
 
-        <button type="submit" className="submit-btn">
-          Add Expense
+        <button type="submit" className="submit-btn" disabled={isSubmitting}>
+          {isSubmitting ? 'Saving to MongoDB...' : 'Add Expense'}
         </button>
       </form>
     </div>

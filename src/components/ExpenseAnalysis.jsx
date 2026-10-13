@@ -14,17 +14,20 @@ function ExpenseAnalysis({ expenses }) {
   }
 
   // 1. Total spent
-  const totalAmount = expenses.reduce((sum, item) => sum + item.amount, 0);
+  const totalAmount = expenses.reduce((sum, item) => sum + Number(item.amount || 0), 0);
 
   // 2. Average expense
   const averageAmount = (totalAmount / expenses.length).toFixed(2);
 
   // 3. Highest expense
-  const highestExpense = expenses.reduce((max, item) => (item.amount > max.amount ? item : max), expenses[0]);
+  const highestExpense = expenses.reduce(
+    (max, item) => (Number(item.amount) > Number(max.amount) ? item : max),
+    expenses[0]
+  );
 
   // 4. Category-wise breakdown
   const categoryTotals = expenses.reduce((acc, item) => {
-    acc[item.category] = (acc[item.category] || 0) + item.amount;
+    acc[item.category] = (acc[item.category] || 0) + Number(item.amount || 0);
     return acc;
   }, {});
 

@@ -47,25 +47,35 @@ function ExpenseList({ expenses, onDeleteExpense }) {
               </tr>
             </thead>
             <tbody>
-              {filteredExpenses.map((expense) => (
-                <tr key={expense.id}>
-                  <td>{expense.date}</td>
-                  <td><strong>{expense.title}</strong></td>
-                  <td>
-                    <span className="category-badge">{expense.category}</span>
-                  </td>
-                  <td className="amount-cell">₹{expense.amount.toLocaleString('en-IN')}</td>
-                  <td>
-                    <button
-                      type="button"
-                      className="delete-btn"
-                      onClick={() => onDeleteExpense(expense.id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {filteredExpenses.map((expense) => {
+                const itemId = expense._id || expense.id;
+                return (
+                  <tr key={itemId}>
+                    <td>{expense.date}</td>
+                    <td>
+                      <strong>{expense.title}</strong>
+                      {expense._id && (
+                        <span className="mongo-id-tag" title={`MongoDB _id: ${expense._id}`}>
+                          ID: {String(expense._id).slice(-4)}
+                        </span>
+                      )}
+                    </td>
+                    <td>
+                      <span className="category-badge">{expense.category}</span>
+                    </td>
+                    <td className="amount-cell">₹{Number(expense.amount).toLocaleString('en-IN')}</td>
+                    <td>
+                      <button
+                        type="button"
+                        className="delete-btn"
+                        onClick={() => onDeleteExpense(itemId)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
